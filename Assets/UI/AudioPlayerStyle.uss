@@ -1,0 +1,46 @@
+.header {
+    color: rgb(255, 71, 0);
+    -unity-text-outline-width: 1px;
+    -unity-text-outline-color: rgb(79, 45, 45);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-left-radius: 1px;
+    border-top-right-radius: 1px;
+    border-bottom-right-radius: 1px;
+    border-bottom-left-radius: 1px;
+}
+
+.controls {
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
+.audio-player-button {
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    -unity-background-scale-mode: scale-to-fit;
+    width: 20%;
+    height: 50%;
+    border-left-color: rgb(0, 0, 0);
+    border-right-color: rgb(0, 0, 0);
+    border-top-color: rgb(0, 0, 0);
+    border-bottom-color: rgb(0, 0, 0);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+
+.seekbar {
+    justify-content: flex-end;
+    align-items: stretch;
+}

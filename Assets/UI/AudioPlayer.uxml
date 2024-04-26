@@ -1,0 +1,16 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/Base%20UI%20Style.uss?fileID=7433441132597879392&amp;guid=d3445b333fe1a1842884c57d6d84292e&amp;type=3#Base UI Style" />
+    <ui:VisualElement style="flex-grow: 1; border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-top-left-radius: 2px; border-top-right-radius: 2px; border-bottom-right-radius: 2px; border-bottom-left-radius: 2px; border-left-color: rgba(122, 173, 38, 0); border-right-color: rgba(122, 173, 38, 0); border-top-color: rgba(122, 173, 38, 0); border-bottom-color: rgba(122, 173, 38, 0); -unity-text-outline-width: 2px; -unity-text-outline-color: rgba(121, 0, 255, 0);">
+        <ui:VisualElement style="flex-grow: 1;">
+            <ui:Label tabindex="-1" text="Big.&#10;" parse-escape-sequences="true" display-tooltip-when-elided="true" class="header" style="font-size: 30px; -unity-font-style: bold;" />
+        </ui:VisualElement>
+        <ui:VisualElement class="seekbar" style="flex-grow: 1; height: 80%;">
+            <ui:Slider value="0" high-value="100" name="seekbar" style="margin-right: 20px; margin-left: 20px;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="Controls" class="controls" style="height: 20%; align-self: stretch; justify-content: center; align-items: flex-end;">
+            <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="play" class="audio-player-button" style="background-image: url(&apos;project://database/Assets/UI/Icon/play.png?fileID=2800000&amp;guid=f23cdda4b24a1bb42982cf0789a206c9&amp;type=3#play&apos;); justify-content: flex-start; align-items: stretch;" />
+            <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="stop" class="audio-player-button" style="background-image: url(&apos;project://database/Assets/UI/Icon/stop.png?fileID=2800000&amp;guid=4927709cb70a0e64397df922894a59b7&amp;type=3#stop&apos;);" />
+            <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="mute" class="audio-player-button" style="background-image: url(&apos;project://database/Assets/UI/Icon/silent.png?fileID=2800000&amp;guid=1346678246d46464e84a82ce2274ed20&amp;type=3#silent&apos;);" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
