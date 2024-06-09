@@ -108,6 +108,8 @@ public class BarPlacer : MonoBehaviour
         }    
 
         fretController.Init(frets);
+
+        Spawner.GetComponent<NoteSpawnController>().Init(spawners, despawners, noteInfo.noteDescription);
     }
 
     private void OnValidate()
@@ -147,8 +149,6 @@ public class BarPlacer : MonoBehaviour
             var separator = Instantiate(Separator, transform);
             separator.name = string.Format("{0}{1}", separatorPrefix, i);
         }
-
-        Spawner.GetComponent<NoteSpawnController>().Init(spawners, despawners, noteInfo.noteDescription);
 
         PlaceItems();
     }  
