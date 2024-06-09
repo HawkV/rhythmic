@@ -18,14 +18,25 @@ public class TrackController : MonoBehaviour
     private ConcurrentQueue<TimedChord> chords = new();
     private List<TimedChord> chordList = new(); // duplicating collection for display purposes
 
-    private Dictionary<Note, NoteSpawner> spawners;
+    [SerializeField]
+    private NoteSpawnController noteSpawnController;
 
     void Awake()
     {
-        // AddChord(new Chord(new BitVector32(0b00001)), 10f, 10f);
-        audioPlayer.LoadingStatusChanged += TrackStart;
-    }
+        var A = new Note("A");
+        var B = new Note("B");
+        var C = new Note("C");
+        var D = new Note("D");
+        var E = new Note("E");
 
+        AddChord(new Chord(new int[]{1, 2, 5}), 5f, 1f);
+
+    
+
+        EventManager.StartListening(EventManager.Event.ChordPlayed, PlayChord);
+        EventManager.StartListening(EventManager.Event.LoadingStatusChanged, TrackStart);
+    }
+    
     public void TrackStart(LoadingStatus status) {
         if (status != LoadingStatus.Completed) {
             return;
@@ -38,7 +49,6 @@ public class TrackController : MonoBehaviour
         });
         
         chordList.ForEach((TimedChord c) => {
-            
             chords.Enqueue(c);
         });
 
@@ -64,7 +74,7 @@ public class TrackController : MonoBehaviour
         yield return new WaitForSeconds(chord.end - audioPlayer.Time());
     }
 
-    public void PlayChord(Chord chord) {
+    void PlayChord(Chord chord) {
         if (chords.IsEmpty) {
             return;
         }

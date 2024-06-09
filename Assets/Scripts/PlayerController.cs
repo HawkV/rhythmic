@@ -11,71 +11,52 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
-    private AudioPlayer audioPlayer;
-
-    [SerializeField]
-    private TrackController trackController;
-
-    [SerializeField]
-    private NotePlacer noteSpawner;
+    private NoteInfo noteInfo;
 
     private PlayerInput playerInput;
 
-    private Note[] notes = new Note[] {
-        new("A"),
-        new("B"),
-        new("C"),
-        new("D"),
-        new("E"),
-    };
-
-    private Dictionary<Note, bool> notePressed = new();
+    private Chord pressedNotes = new();
 
     // Start is called before the first frame update
     void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
 
-        playerInput.actions["Fret"].started += (InputAction.CallbackContext ctx) => Debug.Log(NotePressToString());
+        playerInput.actions["Fret"].started += (InputAction.CallbackContext ctx) => 
+            EventManager.TriggerEvent(EventManager.Event.ChordPlayed, pressedNotes);
 
-        foreach (var note in notes) {
-            playerInput.actions[note.Name].started += (InputAction.CallbackContext ctx) => RegisterNotePress(ctx, note);
-            playerInput.actions[note.Name].canceled += (InputAction.CallbackContext ctx) => RegisterNotePress(ctx, note);
+        for (int i = 0; i < noteInfo.noteDescription.Length; i++) {
+            var note = noteInfo.noteDescription[i];
+            var noteActions = playerInput.actions[note.name];
 
-            notePressed[note] = false;          
+            var capturedIndex = i;
+            noteActions.started += (InputAction.CallbackContext ctx) => RegisterFretPress(ctx, capturedIndex);
+            noteActions.canceled += (InputAction.CallbackContext ctx) => RegisterFretPress(ctx, capturedIndex   );
         }
     }
 
     void OnEnable() {
-        audioPlayer.LoadingStatusChanged += OnLoadingStatusChanged;   
+        EventManager.StartListening(EventManager.Event.LoadingStatusChanged, OnLoadingStatusChanged);   
     }
 
     void OnDisable() {
-        audioPlayer.LoadingStatusChanged -= OnLoadingStatusChanged;
+        EventManager.StopListening(EventManager.Event.LoadingStatusChanged, OnLoadingStatusChanged);
     }
 
     void OnLoadingStatusChanged(LoadingStatus status) {
         Debug.Log("bigly changed status to " + status);
     }
 
-    void RegisterNotePress(InputAction.CallbackContext ctx, Note note) {
-        notePressed[note] = ctx.phase switch {
+    void RegisterFretPress(InputAction.CallbackContext ctx, int noteID) {
+        var notePressed = ctx.phase switch {
             InputActionPhase.Started => true,
             InputActionPhase.Canceled => false,
             _ => false
         };
 
-        noteSpawner.notes[note.Name].SetHighlighted(notePressed[note]);
-    }
+        pressedNotes.SetNote(noteID, notePressed);
 
-    string NotePressToString() {
-        var s = "test: ";
-
-        foreach(var note in notePressed) {
-            s += note.Key + " " + note.Value + "; ";
-        }
-
-        return s;
+        EventManager.TriggerEvent(EventManager.Event.NotePressed, noteID, notePressed);
     }
 
     // Update is called once per frame

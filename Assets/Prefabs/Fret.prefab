@@ -177,7 +177,7 @@ GameObject:
   - component: {fileID: 2163555002376459425}
   - component: {fileID: 3386200926136321282}
   m_Layer: 0
-  m_Name: Key
+  m_Name: Fret
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -212,4 +212,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d0446ff5d876a643aad8ee7c82c2604, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Default: {fileID: 2100000, guid: 3ba3d13011facaf42a44faffbecb0451, type: 2}
+  Highlighted: {fileID: 2100000, guid: 236aa02ba276e4747b7d4d2ee46865f3, type: 2}
+  Deactivated: {fileID: 2100000, guid: c81c689d5defce348bc66a7844a50ddc, type: 2}
   meshRenderer: {fileID: 382916109799244503}

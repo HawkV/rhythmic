@@ -4,32 +4,22 @@ using UnityEngine;
 
 public class NoteSpawner : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject Note;
+    private GameObject note, despawner;
 
-    [SerializeField]
     private float speed;
 
-    [SerializeField]
-    private GameObject despawner;
-
-    public void Init(GameObject despawner) {
+    public void Init(float speed, GameObject note, GameObject despawner) {
+        this.speed = speed;
+        
         this.despawner = despawner;
-        StartCoroutine(EndlessSpawn());
-    }
+        this.note = note;
+    }   
 
     public GameObject Spawn() {
-        var note = Instantiate(Note, transform, worldPositionStays:false);
-        note.GetComponent<NoteController>().Init(transform.position, despawner.transform.position, speed);
-        note.transform.position = transform.position;
+        var obj = Instantiate(note, transform, worldPositionStays:false);
+        obj.GetComponent<NoteController>().Init(transform.position, despawner.transform.position, speed);
+        obj.transform.position = transform.position;
 
-        return note;
-    }
-
-    public IEnumerator EndlessSpawn() {
-        while (true) {
-            Spawn();
-            yield return new WaitForSeconds(1f);
-        }
-    }
+        return obj;
+    }   
 }

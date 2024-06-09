@@ -10,16 +10,13 @@ public class AudioPlayer: MonoBehaviour
     [SerializeField]
     private AudioSource audioSource;
 
-    public event LoadingStatusChangedDelegate LoadingStatusChanged; 
-    public delegate void LoadingStatusChangedDelegate(LoadingStatus status);
-
-
     private LoadingStatus _loadingStatus;    
     private LoadingStatus loadingStatus {
         get{ return _loadingStatus; }
         set{
             _loadingStatus = value;
-            LoadingStatusChanged?.Invoke(loadingStatus);
+            
+            EventManager.TriggerEvent(EventManager.Event.LoadingStatusChanged, _loadingStatus);
         }
     }
 

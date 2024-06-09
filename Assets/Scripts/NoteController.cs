@@ -23,5 +23,9 @@ public class NoteController : MonoBehaviour
     {
         t += speed * Time.deltaTime;
         transform.position = Vector3.Lerp(start, finish, t);
+
+        if (t >= 1f) {
+            Destroy(gameObject);
+        }
     }
 }
