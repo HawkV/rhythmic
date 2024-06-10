@@ -17,8 +17,8 @@ public class NoteSpawner : MonoBehaviour
 
     public GameObject Spawn() {
         var obj = Instantiate(note, transform, worldPositionStays:false);
+        obj.SetActive(true);
         obj.GetComponent<NoteController>().Init(transform.position, despawner.transform.position, speed);
-        obj.transform.position = transform.position;
 
         return obj;
     }   

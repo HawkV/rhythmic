@@ -56,12 +56,14 @@ public record class Chord {
 public record class TimedChord {
     public float start; // earliest valid trigger time from track start in seconds
     public float end; // latest valid trigger time from track start in seconds
+    public float triggerTime; // trigger time segment center
 
     public Chord chord;
 
-    public TimedChord(Chord chord, float start, float end) {
+    public TimedChord(Chord chord, float start, float end, float triggerTime) {
         this.chord = chord;
         this.start = start;
         this.end = end;
+        this.triggerTime = triggerTime;
     }
 }

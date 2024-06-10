@@ -15,23 +15,38 @@ public class TrackController : MonoBehaviour
     [SerializeField]
     private float speed;
 
-    private ConcurrentQueue<TimedChord> chords = new();
-    private List<TimedChord> chordList = new(); // duplicating collection for display purposes
+    private float spawnHeadstart;
+
+    [SerializeField]
+    private GameObject Spawner, Despawner, FretBar;
+
+    private int chordToPlay, chordToSpawn;
+    private List<TimedChord> chordList = new();
+    private Dictionary<TimedChord, List<GameObject>> spawnedChordList = new();
 
     [SerializeField]
     private NoteSpawnController noteSpawnController;
 
     void Awake()
     {
-        var A = new Note("A");
-        var B = new Note("B");
-        var C = new Note("C");
-        var D = new Note("D");
-        var E = new Note("E");
+        AddChord(new Chord(new int[]{0, 1, 4}), 3f, 0.1f);
+        AddChord(new Chord(new int[]{0, 2, 3}), 3.5f, 0.1f);
+        AddChord(new Chord(new int[]{1, 2, 3}), 4f, 0.1f);
+        AddChord(new Chord(new int[]{1, 2, 4}), 4.5f, 0.1f);
+        AddChord(new Chord(new int[]{2, 3, 4}), 8f, 0.1f);
+        AddChord(new Chord(new int[]{0, 2, 3}), 9f, 0.1f);
+        AddChord(new Chord(new int[]{2, 3, 4}), 10f, 0.1f);
+        AddChord(new Chord(new int[]{1, 2, 4}), 11f, 0.1f);
 
-        AddChord(new Chord(new int[]{1, 2, 5}), 5f, 1f);
-
-    
+        // we need to spawn the chords <spawnHeadstart> time before the trigger time 
+        // for them to be able to travel the entire distance from start to finish
+        
+        // for now "speed" is actually 1/(total travel time in seconds from spawner to despawner)
+        // but what we need is total travel time from spawner to fret bar
+        // we get that value by calculating the ratio of (distance from start to bar) to (total distnace) and multiplying our total time by it
+        spawnHeadstart = (1/speed) * Vector3.Distance(Spawner.transform.position, FretBar.transform.position)/Vector3.Distance(Spawner.transform.position, Despawner.transform.position); 
+        
+        Debug.Log("spawn headstart, sec. : " + spawnHeadstart);
 
         EventManager.StartListening(EventManager.Event.ChordPlayed, PlayChord);
         EventManager.StartListening(EventManager.Event.LoadingStatusChanged, TrackStart);
@@ -42,46 +57,43 @@ public class TrackController : MonoBehaviour
             return;
         }
 
+        chordToPlay = 0;
+        chordToSpawn = 0;
+
         chordList.Sort((TimedChord a, TimedChord b) => {
-            if (a.start < b.start) return 1;
+            if (a.start < b.start) return -1;
             if (a.start == b.start) return 0;
-            return -1;
-        });
-        
-        chordList.ForEach((TimedChord c) => {
-            chords.Enqueue(c);
+            return 1;
         });
 
         audioPlayer.Play();
-
-        StartCoroutine(AutoEvict());
     }
 
-    IEnumerator AutoEvict() {
-        if (chords.IsEmpty) {
-            yield break;
-        }
-
-        chords.TryPeek(out var chord);
-
-        if (audioPlayer.Time() >= chord.end) {
-            chords.TryDequeue(out _);
-            Debug.Log("miss");
-        }
-
-        chords.TryPeek(out chord);
-
-        yield return new WaitForSeconds(chord.end - audioPlayer.Time());
-    }
-
-    void PlayChord(Chord chord) {
-        if (chords.IsEmpty) {
+    void EvictChord(float currentTime) {
+        if (chordList.Count == 0 || chordToPlay >= chordList.Count) {
             return;
         }
 
-        chords.TryPeek(out var currentChord);
+        var chord = chordList[chordToPlay];
+
+        if (currentTime >= chord.end) {
+            chordToPlay++;
+            Debug.Log("miss");
+        }
+    }
+
+    void PlayChord(Chord chord) {
+        Debug.Log("playing chord, chord to play: " + chordToPlay);
+        if (chordList.Count == 0 || chordToPlay >= chordList.Count) {
+            return;
+        }
+
+        var currentChord = chordList[chordToPlay];
 
         var time = audioPlayer.Time();
+
+        Debug.Log("time of player action: " + time);
+        Debug.Log("current chord trigger time: " + currentChord.triggerTime);
         if (time < currentChord.start) {
             return;
         }
@@ -89,28 +101,48 @@ public class TrackController : MonoBehaviour
         if (time <= currentChord.end) {
             if (currentChord.chord.Equals(chord)) {
                 Debug.Log("hit");
+                
+                foreach(var big in spawnedChordList[currentChord]) {
+                    Destroy(big);
+                }
             } else {
                 Debug.Log("miss");
             }
 
-            chords.TryDequeue(out _);
+            chordToPlay++;
         }
     }
 
-    // 
     public void AddChord(Chord chord, float time, float threshold) {
         var c = new TimedChord(
             chord, 
             start: time - threshold,
-            end: time + threshold
+            end: time + threshold,
+            triggerTime: time
         );
         
         chordList.Add(c);
     }
 
+    public void SpawnNextChord(float currentTime) {
+        if (chordToSpawn >= chordList.Count) {
+            return;
+        }
+
+        var timedChord = chordList[chordToSpawn];
+
+        if (currentTime >= (timedChord.triggerTime - spawnHeadstart)) {
+            spawnedChordList[timedChord] = noteSpawnController.SpawnChord(timedChord.chord);
+            chordToSpawn++;
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
-        
+        var currentTime = audioPlayer.Time();
+
+        SpawnNextChord(currentTime);
+        EvictChord(currentTime);
     }
 }

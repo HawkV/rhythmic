@@ -12,7 +12,8 @@ public class BarPlacerEditor : Editor
         base.OnInspectorGUI();
 
         EditorGUILayout.BeginHorizontal();
-        if (GUILayout.Button("Init")) {
+        var buttonDescription = new GUIContent("Init", "Re-creates the instantiated objects. Use if any of the prefabs changes");
+        if (GUILayout.Button(buttonDescription)) {
             barPlacer.Init();   
         }
         EditorGUILayout.EndHorizontal();

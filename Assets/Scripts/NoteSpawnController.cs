@@ -21,7 +21,11 @@ public class NoteSpawnController : MonoBehaviour
             var despawner = despawnerLocations[i];
             var ns = spawner.AddComponent<NoteSpawner>();
 
-            ns.Init(Speed, Note, despawner);
+            var note = Instantiate(Note);
+            note.SetActive(false);
+            note.GetComponent<HighlightController>().Init(noteDescriptions[i].color);
+
+            ns.Init(Speed, note, despawner);
             noteSpawners.Add(ns);
         }
     }   
