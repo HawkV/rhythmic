@@ -23,14 +23,14 @@ public class NoteSpawnController : MonoBehaviour
 
             var note = Instantiate(Note);
             note.SetActive(false);
-            note.GetComponent<HighlightController>().Init(noteDescriptions[i].color);
 
-            ns.Init(Speed, note, despawner);
+            ns.Init(Speed, noteDescriptions[i].color, note, despawner);
             noteSpawners.Add(ns);
         }
     }   
 
-    public List<GameObject> SpawnChord(Chord chord) {
+    public ChordController SpawnChord(Chord chord) {
+        var chordObj = new GameObject();
         var spawnedNotes = new List<GameObject>();
         var pressedNotes = chord.GetPressedNotes();
 
@@ -38,6 +38,9 @@ public class NoteSpawnController : MonoBehaviour
             spawnedNotes.Add(noteSpawners[preessedNote].Spawn());
         }
 
-        return spawnedNotes;
+        var chordController = chordObj.AddComponent<ChordController>();
+        chordController.Init(spawnedNotes);
+
+        return chordController;
     }   
 }

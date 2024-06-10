@@ -14,7 +14,8 @@ public class EventManager : MonoBehaviour
     {
         LoadingStatusChanged,
         ChordPlayed,
-        NotePressed
+        NotePressed, 
+        ChordHit,
     }
 
     void Start()

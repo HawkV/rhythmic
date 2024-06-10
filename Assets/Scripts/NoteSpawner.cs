@@ -6,11 +6,13 @@ public class NoteSpawner : MonoBehaviour
 {
     private GameObject note, despawner;
 
+    private Color color;
+
     private float speed;
 
-    public void Init(float speed, GameObject note, GameObject despawner) {
+    public void Init(float speed, Color color, GameObject note, GameObject despawner) {
         this.speed = speed;
-        
+        this.color = color;
         this.despawner = despawner;
         this.note = note;
     }   
@@ -19,6 +21,7 @@ public class NoteSpawner : MonoBehaviour
         var obj = Instantiate(note, transform, worldPositionStays:false);
         obj.SetActive(true);
         obj.GetComponent<NoteController>().Init(transform.position, despawner.transform.position, speed);
+        obj.GetComponent<HighlightController>().Init(color);
 
         return obj;
     }   

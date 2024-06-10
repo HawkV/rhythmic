@@ -22,7 +22,7 @@ public class TrackController : MonoBehaviour
 
     private int chordToPlay, chordToSpawn;
     private List<TimedChord> chordList = new();
-    private Dictionary<TimedChord, List<GameObject>> spawnedChordList = new();
+    private Dictionary<TimedChord, ChordController> spawnedChordList = new();
 
     [SerializeField]
     private NoteSpawnController noteSpawnController;
@@ -78,12 +78,16 @@ public class TrackController : MonoBehaviour
 
         if (currentTime >= chord.end) {
             chordToPlay++;
-            Debug.Log("miss");
+
+            spawnedChordList[chord].Deactivate();
         }
     }
 
-    void PlayChord(Chord chord) {
-        Debug.Log("playing chord, chord to play: " + chordToPlay);
+    void PlayChord(Chord chord, bool isStarted) {
+        if (!isStarted) {
+            return;
+        }
+        
         if (chordList.Count == 0 || chordToPlay >= chordList.Count) {
             return;
         }
@@ -92,24 +96,20 @@ public class TrackController : MonoBehaviour
 
         var time = audioPlayer.Time();
 
-        Debug.Log("time of player action: " + time);
-        Debug.Log("current chord trigger time: " + currentChord.triggerTime);
         if (time < currentChord.start) {
             return;
         }
 
         if (time <= currentChord.end) {
-            if (currentChord.chord.Equals(chord)) {
-                Debug.Log("hit");
+            var isHit = currentChord.chord.Equals(chord);
+
+            if (isHit) {
+                spawnedChordList[currentChord].Play();
                 
-                foreach(var big in spawnedChordList[currentChord]) {
-                    Destroy(big);
-                }
-            } else {
-                Debug.Log("miss");
+                chordToPlay++;
             }
 
-            chordToPlay++;
+            EventManager.TriggerEvent(EventManager.Event.ChordHit, currentChord.chord, isHit);
         }
     }
 

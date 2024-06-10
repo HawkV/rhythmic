@@ -4,29 +4,36 @@ using UnityEngine;
 
 public class FretController : MonoBehaviour
 {
-    private List<GameObject> frets;
+    [SerializeField]
+    HighlightController outerHighlight, innerHighlight;
 
-    void Start()
+    [SerializeField]
+    EffectController effectController;
+
+    public void Init(Color color)
     {
-        EventManager.StartListening(EventManager.Event.NotePressed, HightlightFret);    
+        outerHighlight.Init(color);
+        innerHighlight.Init(color);
+        effectController.Init(color);
     }
 
-    public void Init(List<GameObject> frets) {
-        this.frets = frets;
+    public void HighlightInner() {
+        innerHighlight.SetHighlighted();
     }
 
-    void HightlightFret(int index, bool isHighlighted) {
-        var fretHighlighter = frets[index].GetComponent<HighlightController>();
-
-        if (isHighlighted) {
-            fretHighlighter.SetHighlighted();
-        } else {
-            fretHighlighter.SetDefault();
-        }
+    public void HighlightOuter() {
+        outerHighlight.SetHighlighted();
     }
 
-    void Update()
-    {
-        
+    public void DefaultInner() {
+        innerHighlight.SetDefault();
+    }
+
+    public void DefaultOuter() {
+        outerHighlight.SetDefault();
+    }
+
+    public void PlayEffects() {
+        effectController.Play();
     }
 }

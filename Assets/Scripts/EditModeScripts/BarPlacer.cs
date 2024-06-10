@@ -15,7 +15,7 @@ public class BarPlacer : MonoBehaviour
     private float Margin;
 
     [SerializeField]
-    private FretController fretController;
+    private FretsController fretController;
 
     [SerializeField]
     private GameObject Fret, Separator;
@@ -102,12 +102,14 @@ public class BarPlacer : MonoBehaviour
             return;
         }
 
-        for (int i = 0; i < frets.Count; i++) {
-            var highlight = frets[i].GetComponent<HighlightController>();
-            highlight.Init(noteInfo.noteDescription[i].color);
+        var fretControllers = frets.Select(f => f.GetComponent<FretController>()).ToList();
+        for (int i = 0; i < fretControllers.Count; i++) {
+            Debug.Log(fretControllers[i]);
+            Debug.Log(noteInfo.noteDescription[i].color);
+            fretControllers[i].Init(noteInfo.noteDescription[i].color);
         }    
 
-        fretController.Init(frets);
+        fretController.Init(fretControllers);
 
         Spawner.GetComponent<NoteSpawnController>().Init(spawners, despawners, noteInfo.noteDescription);
     }

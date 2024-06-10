@@ -22,8 +22,11 @@ public class PlayerController : MonoBehaviour
     {
         playerInput = GetComponent<PlayerInput>();
 
-        playerInput.actions["Fret"].started += (InputAction.CallbackContext ctx) => 
-            EventManager.TriggerEvent(EventManager.Event.ChordPlayed, pressedNotes);
+        var fretActions = playerInput.actions["Fret"];
+        fretActions.started += (InputAction.CallbackContext ctx) => 
+            EventManager.TriggerEvent(EventManager.Event.ChordPlayed, pressedNotes, true);
+        fretActions.canceled += (InputAction.CallbackContext ctx) => 
+            EventManager.TriggerEvent(EventManager.Event.ChordPlayed, pressedNotes, false);
 
         for (int i = 0; i < noteInfo.noteDescription.Length; i++) {
             var note = noteInfo.noteDescription[i];
@@ -31,7 +34,7 @@ public class PlayerController : MonoBehaviour
 
             var capturedIndex = i;
             noteActions.started += (InputAction.CallbackContext ctx) => RegisterFretPress(ctx, capturedIndex);
-            noteActions.canceled += (InputAction.CallbackContext ctx) => RegisterFretPress(ctx, capturedIndex   );
+            noteActions.canceled += (InputAction.CallbackContext ctx) => RegisterFretPress(ctx, capturedIndex);
         }
     }
 
